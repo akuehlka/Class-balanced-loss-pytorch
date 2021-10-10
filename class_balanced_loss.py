@@ -50,7 +50,7 @@ def focal_loss(labels, logits, alpha, gamma):
 
 
 
-def CB_loss(labels, logits, samples_per_cls, no_of_classes, loss_type, beta, gamma, device='cpu'):
+def CB_loss(labels, logits, samples_per_cls, no_of_classes, loss_type, beta, gamma):
     """Compute the Class Balanced Loss between `logits` and the ground truth `labels`.
 
     Class Balanced Loss: ((1-beta)/(1-beta^n))*Loss(labels, logits)
@@ -74,7 +74,8 @@ def CB_loss(labels, logits, samples_per_cls, no_of_classes, loss_type, beta, gam
 
     labels_one_hot = F.one_hot(labels, no_of_classes).float()
 
-    weights = torch.tensor(weights).float().to(device)
+    weights = torch.tensor(weights).float()
+    weights = weights.type_as(logits)
     weights = weights.unsqueeze(0)
     weights = weights.repeat(labels_one_hot.shape[0],1) * labels_one_hot
     weights = weights.sum(1)
